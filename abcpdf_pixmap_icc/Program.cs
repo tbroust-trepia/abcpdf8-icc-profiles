@@ -12,7 +12,7 @@ namespace abcpdf_pixmap_icc
 
             using (Doc doc = new Doc())
             {
-                doc.Read("in.pdf"); // in this PDF a few images (5) have an embedded ICC profile, and we must remove them
+                doc.Read("in.pdf"); // in this PDF the image has an embedded ICC profile, and I must remove them
 
                 Console.WriteLine("################################ THROUGH GETINFO ################################");
 
@@ -21,13 +21,13 @@ namespace abcpdf_pixmap_icc
                 {
                     if (item != null && doc.GetInfo(item.ID, "/ColorSpace*[0]*:Name").Equals("ICCBased", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        int profileId = doc.GetInfoInt(item.ID, "/ColorSpace*[1]:Ref"); // note the [1]
+                        int profileId = doc.GetInfoInt(item.ID, "/ColorSpace*[1]:Ref"); // note the [1]: why is it there?
                         if (profileId != 0)
                         {
                             doc.GetInfo(profileId, "Decompress");
                             string profileData = doc.GetInfo(profileId, "Stream");
 
-                            // this outputs raw data, with the ICC profile's name somewhere up top
+                            // this outputs the ICC profile raw data, with the profile's name somewhere up top
                             Console.WriteLine(string.Format("ICC profile for object ID {0}: {1}", item.ID, profileData)); 
 
                             doc.SetInfo(profileId, "Stream", string.Empty);
